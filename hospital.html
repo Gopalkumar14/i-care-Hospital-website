@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iCare Hospital</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #cbefc8;
+            color: #370d0d;
+        }
+        .navbar {
+             background: linear-gradient(90deg, #dbd656, #c03327);
+        overflow: hidden;
+        box-shadow: 0 2px 5px rgba(37, 14, 14, 0.2);
+        text-shadow: #5a6a15;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        width: 100%;
+        }
+        .navbar a {
+            float: left;
+            color:  rgb(26, 20, 20);
+            text-align: center;
+            padding: 15px 20px;
+            text-decoration: none;
+            font-size: 20px ;
+            transition: 0.3s;
+            
+        }
+        .navbar a:hover {
+            background-color: #36392f;
+            color: rgb(8, 9, 8);
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #f2d5c6;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            z-index: 1000;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .popup-content {
+            font-size: 16px;
+            line-height: 1.6;
+        }
+        .popup-close {
+            background-color: #dc3545;
+            color: rgb(232, 225, 225);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            transition: 0.3s;
+            font-weight: bold;
+        }
+        .popup-close:hover {
+            background-color: #52191f;
+        }
+        .section {
+            padding: 20px;
+            margin: 20px;
+            
+            background-color: #c38b1b;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(12, 10, 10, 0.1);
+            text-align: center;
+        }
+        .section h1 {
+            color: #07010a;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #050c07;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #010501;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .form-group input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .form-actions button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .form-actions .submit-btn {
+            background-color: #172b1c;
+            color: white;
+        }
+        .form-actions .submit-btn:hover {
+            background-color: #010903;
+        }
+        .form-actions .cancel-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .form-actions .cancel-btn:hover {
+            background-color: #c82333;
+        }
+        .card {
+            border: 3px solid #05180b;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background-color: #8dbd8d;
+        }
+        .card h3 {
+            color: #0b150f;
+            margin-top: 0;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 999;
+        }
+        footer {
+            background: linear-gradient(90deg, #324b29, #00c4b4);
+            color: rgb(229, 217, 217);
+            text-align: center;
+            text-shadow: #379549;
+            text-overflow: ellipsis;
+            padding: 20px;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        footer p {
+            margin: 5px 0;
+        }
+        
+        /* New styles for carousel */
+        .carousel {
+            width: 95%;
+            height: 10%;
+            margin: 20px auto;
+            overflow: hidden;
+            position: relative;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(206, 103, 103, 0.2);
+        }
+        .carousel-inner {
+            display: flex;
+            transition: transform 0.4s ease;
+        }
+        .carousel-item {
+            min-width: 100%;
+            box-sizing: border-box;
+        }
+        .carousel-item img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .carousel-control {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            z-index: 1;
+            font-size: 20px;
+        }
+        .carousel-control.prev {
+            left: 10px;
+        }
+        .carousel-control.next {
+            right: 10px;
+        }
+        
+        /* Styles for cards section */
+        .cards-section {
+            padding: 20px;
+            margin: 20px auto;
+            max-width: 1200px;
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 10px;
+        }
+        
+        .info-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .info-card img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 15px;
+        }
+        
+        .card-content h3 {
+            color: #02495f;
+            margin-top: 0;
+        }
+        
+        .card-content p {
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        /* Styles for marquee */
+        .hospital-ads {
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            width: 90%;
+        }
+        .hospital-ads:hover{
+             margin: 20px auto;
+            padding: 10px;
+            background-color: #c0c45f;
+            border-radius: 8px;
+            width: 90%;
+
+
+        }
+        .hospital-ads img {
+            height: 80px;
+            margin: 0 20px;
+            vertical-align: middle;
+        }
+        .hospital-ads img:hover{
+             height: 80px;
+            margin: 0 20px;
+            vertical-align: middle;
+            background-color: #156a1d;
+
+        }
+        .mb-13{
+            margin: auto;
+            text-align: center;
+            padding: 10px;
+            text-size-adjust: 5px;
+            text-decoration-color: #6fab90;
+            
+        }
+        .card{
+            background-color: rgb(222, 188, 188);
+            font-size: medium;
+            text-transform: capitalize;
+        }
+      
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="#" onclick="showPopup('home')">Home</a>
+        <a href="#" onclick="showPopup('about')">About</a>
+        <a href="#" onclick="showPopup('contact')">Contact</a>
+        <a href="#" onclick="showPopup('speciality')">Speciality</a>
+        <a href="#" onclick="showPopup('patient')">Patient Data</a>
+        <a href="#" onclick="showPopup('blog')">Blog</a>
+        <a href="#" onclick="showPopup('Apointment')">Apointment</a>
+
+    </div>
+
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="popup">
+        <button class="popup-close" onclick="closePopup()">Close</button>
+        <div class="popup-content" id="popup-content"></div>
+    </div>
+
+    <div class="section">
+        <h1 > Wellcome to 👁‍🗨 iCare Hospital</h1>
+    </div>
+
+    <!-- Carousel Section -->
+    <div class="carousel">
+        <div class="carousel-inner" id="carousel-inner">
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="iCare Hospital Building">
+                <div class="carousel-caption">iCare Hospital - State of the Art Facilities</div>
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1581056771107-24ca5f033842?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="iCare Hospital Operation Theater">
+                 
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="iCare Hospital Emergency">
+                
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="iCare Hospital Staff">
+                
+            </div>
+            <div class="carousel-item">
+                <img src="https://images.unsplash.com/photo-1530026186672-2cd00ffc50fe?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="iCare Hospital Patient Care">
+            </div>
+        </div>
+        <button class="carousel-control prev" onclick="prevSlide()">❮</button>
+        <button class="carousel-control next" onclick="nextSlide()">❯</button>
+    </div>
+
+    <!-- New Cards Section -->
+    <div class="cards-section">
+        <h2 style="text-align: center; margin-bottom: 20px;">Our Specialized Departments</h2>
+        <div class="cards-container">
+            <div class="info-card">
+                <img src="Dr.Nisha_.jpg" alt="Cardiology">
+                <div class="card-content">
+                    <h3>Dr. Nisha Chaudhary</h3>
+                 <ul>   <p><li><strong>Specialist:</strong>
+Consultant - Glaucoma</li>
+<li><strong>Qualification:</strong>Bachelor of Medicine and Bachelor of surgery, Diploma in ophthalmology, DNB(Ophthalmology)</li>
+
+<li><strong>E-Mail:</strong>Dr.nish.nc@gmail.com.</li>
+</p></ul>
+                </div>
+            </div>
+            <div class="info-card">
+                <img src="female.jpg" alt="Neurology">
+                <div class="card-content">
+                    <h3> Dr. Charu Tandon</h3>
+                  <ul> <p></li> <strong>Senior Consultant:</strong>
+ Cataract and Anterior segment services</li>
+</li><strong>Qualification:</strong>
+MBBS MS<li>
+<strong>E-Mail:</strong>
+drcharu@icarehospital.org.</p></ul> 
+                </div>
+            </div>
+            <div class="info-card">
+                <img src="dctoropto.png" alt="Pediatrics">
+                <div class="card-content">
+                    <h3>Optomatrist</h3>
+                    <p>Dr. S.K.S. Marya
+Group Chairman & Chief Surgeon - Orthopaedics, Joints and Robotic Surgery, and Chief Advisor to I care  Healthcare 
+Orthopaedics & Joint Replacement, Arthroscopy & Sports Injury, Robotic Surgery
+
+<strong><li>Experience: 40+ Years</li>
+
+
+ <li> I Care hospital- Smart Treatment</li>
+ </strong>
+
+
+<li><strong>I Care Hospital- Moradabad
+</strong> </li>
+</p>
+                </div>
+            </div>
+            <div class="info-card">
+                <img src="anup.jpg" alt="urolgy">
+                <div class="card-content">
+                    <h3>Urology</h3>
+                    <p>
+
+
+<h2>Dr. Anupam Bhargava</h2>
+<strong>Chairman - Urology</strong>
+
+
+<ul><li><strong>About Dr. Anupam Bhargava</strong></li></ul>
+Dr. Anupam Bhargava is a well-known Genito-Urinary Surgeon (Urologist) practising in Delhi.
+ He completed his graduation and post-graduation from Gwalior Medical College. He worked at the Safdarjung Hospital in the years 1979,<strong>
+</b></strong> Experience: 40+ Years
+</b>
+                </div>
+            </div>
+            <div class="info-card">
+                <img src="Dr.-Hafsa.jpg" alt="Surgery">
+                <div class="card-content">
+                   <h3>Dr. Hafsa Bashir</h3>
+                 <ul>   <p><li><strong>Specialist:</strong>
+
+Consultant, Cornea, Cataract and Refractive Services</li>
+<li><strong>Qualification:</strong>
+MBBS, MS, FSCEH</li>
+
+<li><strong>E-Mail:</strong>
+drhafsa@icarehospital.org</li>
+</p></ul>
+                </div>
+            </div>
+            <div class="info-card">
+                <img src="https://images.unsplash.com/photo-1579684453423-f84349ef60b0?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Emergency">
+                <div class="card-content">
+                    <h3>Emergency Care</h3>
+                    <p>Department of Emergency I Care
+Emergency I Care
+I CARE Eye hospital provides emergency I care services for ocular emergencies 24*7. Our experienced team of doctors performs emergency ocular surgeries to manage ocular trauma
+
+<li>Contact: +91-120-2477601</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hospital-ads">
+        <marquee behavior="scroll" direction="left" scrollamount="8">
+            <img src="https://www.bing.com/th/id/OIP.s2o1Og4PSX4RXVx87cssOAHaEQ?w=277&h=211&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2" alt="Max Healthcare">
+            <img src="OIP.webp" alt="AIIMS">
+            <img src="apolo.webp" alt="Apollo Hospitals">
+            <img src="OIP (2).webp" alt="Lance cart ">
+            <img src="OIP (1).webp" alt="Narayana Health">
+            <img src="download.webp" alt="Manipal Hospitals">
+        </marquee>
+    </div>
+
+    <footer>
+        <p><strong>iCare Hospital</strong></p>
+        <p>Address: Moradabad (U.P), India | Phone: +91 9012223597 | Email: info@icarehospital.com</p>
+        <p>Open 24 Hours | Providing Compassionate Care Since 2005</p>
+    </footer>
+
+    <script>
+        function showPopup(section) {
+            const popup = document.getElementById('popup');
+            const popupContent = document.getElementById('popup-content');
+            const overlay = document.getElementById('overlay');
+            let content = '';
+
+            switch(section) {
+                case 'home':
+                    content = `
+                        <h2>❤️👍Welcome to iCare Hospital</h2>
+                        <p>Providing compassionate care since 2005. We offer advanced medical services in cardiology, orthopedics, pediatrics, and more. Over 100 patients visit daily for routine check-ups or specialized surgeries.</p>
+                        <p><strong>Email:</strong> info@icarehospital.com<br><strong>Open:</strong> 24 hours</p>
+                    `
+                    break;
+                case 'about':
+                    content = `
+                        <h2>About iCare Hospital</h2>
+                        <p>Established in 2005, iCare Hospital is a trusted healthcare provider offering services in cardiology, orthopedics, pediatrics, and emergency care. Our team delivers personalized treatment in a safe, welcoming environment with state-of-the-art facilities.</p>
+                        <p><strong>Email:</strong> info@icarehospital.com<br><strong>Open:</strong> 24 hours</p>
+                    `
+                    break;
+                case 'contact':
+                    content = `
+                        <h2>Contact Us</h2>
+                        <p><strong>Hospital Name:</strong> iCare Hospital, Sunrise Women's and Children's Hospital and Optical</p>
+                        <p><strong>Address:</strong> Moradabad (U.P), India<br><strong>Phone:</strong> +91 9012223597<br><strong>Email:</strong> info@icarehospital.com<br><strong>Open:</strong> 24 hours</p>
+                    `;
+                    break;
+                case 'speciality':
+                    content = `
+                        <h2>Our Specialities</h2>
+                        <ul>
+                            <li>24-Hour Emergency Department with Trauma Care</li>
+                            <li>Cataract Surgery</li>
+                            <li>Emergency Eye Trauma Treatment</li>
+                            <li>Advanced Diagnostic Imaging: X-ray, CT, MRI, Ultrasound</li>
+                            <li>Neonatal Intensive Care Unit (NICU) and Pediatric ICU (PICU)</li>
+                        </ul>
+                    `;
+                    break;
+                case 'patient':
+                    content = `
+                        <h2>Patient Registration</h2>
+                        <form>
+                            <div class="form-group">
+                                <label for="patient-name">Patient Name:</label>
+                                <input type="text" id="patient-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="father-name">Father Name:</label>
+                                <input type="text" id="father-name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="mobile">Mobile Number:</label>
+                                <input type="tel" id="mobile" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email:</label>
+                                <input type="email" id="email" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input type="password" id="password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="confirm-password">Confirm Password:</label>
+                                <input type="password" id="confirm-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Gender:</label>
+                                <input type="radio" id="male" name="gender" value="male" required>
+                                <label for="male">Male</label>
+                                <input type="radio" id="female" name="gender" value="female">
+                                <label for="female">Female</label>
+                            </div>
+                            <div class="form-group">
+                                <label for="dob">Date of Birth:</label>
+                                <input type="date" id="dob" required>
+                            </div>
+                             <div class="form-group">
+        <div>
+          <label for="state">State / Union Territory</label>
+          <select id="state" name="state" required>
+            <option value="" disabled selected>Select State / UT</option>
+            <optgroup label="States (28)">
+              <option>Andhra Pradesh</option>
+              <option>Arunachal Pradesh</option>
+              <option>Assam</option>
+              <option>Bihar</option>
+              <option>Chhattisgarh</option>
+              <option>Goa</option>
+              <option>Gujarat</option>
+              <option>Haryana</option>
+              <option>Himachal Pradesh</option>
+              <option>Jharkhand</option>
+              <option>Karnataka</option>
+              <option>Kerala</option>
+              <option>Madhya Pradesh</option>
+              <option>Maharashtra</option>
+              <option>Manipur</option>
+              <option>Meghalaya</option>
+              <option>Mizoram</option>
+              <option>Nagaland</option>
+              <option>Odisha</option>
+              <option>Punjab</option>
+              <option>Rajasthan</option>
+              <option>Sikkim</option>
+              <option>Tamil Nadu</option>
+              <option>Telangana</option>
+              <option>Tripura</option>
+              <option>Uttar Pradesh</option>
+              <option>Uttarakhand</option>
+              <option>West Bengal</option>
+            </optgroup>
+            <optgroup label="Union Territories (8)">
+              <option>Andaman and Nicobar Islands</option>
+              <option>Chandigarh</option>
+              <option>Dadra and Nagar Haveli and Daman and Diu</option>
+              <option>Delhi</option>
+              <option>Jammu and Kashmir</option>
+              <option>Ladakh</option>
+              <option>Lakshadweep</option>
+              <option>Puducherry</option>
+            </optgroup>
+          </select>
+        </div>
+        <div>
+                            <div class="form-group"><label for="district">District (Uttar Pradesh)</label>
+<select id="district" name="district" required>
+  <option value="" disabled selected>Select district</option>
+    <optgroup label="Distics (75)">
+  <option>Agra</option>
+  <option>Aligarh</option>
+  <option>Ambedkar Nagar</option>
+  <option>Amethi</option>
+  <option>Amroha</option>
+  <option>Auraiya</option>
+  <option>Ayodhya</option>
+  <option>Azamgarh</option>
+  <option>Baghpat</option>
+  <option>Bahraich</option>
+  <option>Ballia</option>
+  <option>Balrampur</option>
+  <option>Banda</option>
+  <option>Barabanki</option>
+  <option>Bareilly</option>
+  <option>Basti</option>
+  <option>Bhadohi</option>
+  <option>Bijnor</option>
+  <option>Budaun</option>
+  <option>Bulandshahr</option>
+  <option>Chandauli</option>
+  <option>Chitrakoot</option>
+  <option>Deoria</option>
+  <option>Etah</option>
+  <option>Etawah</option>
+  <option>Farrukhabad</option>
+  <option>Fatehpur</option>
+  <option>Firozabad</option>
+  <option>Gautam Buddha Nagar</option>
+  <option>Ghaziabad</option>
+  <option>Ghazipur</option>
+  <option>Gonda</option>
+  <option>Gorakhpur</option>
+  <option>Hamirpur</option>
+  <option>Hapur</option>
+  <option>Hardoi</option>
+  <option>Hathras</option>
+  <option>Jalaun</option>
+  <option>Jaunpur</option>
+  <option>Jhansi</option>
+  <option>Kannauj</option>
+  <option>Kanpur Dehat</option>
+  <option>Kanpur Nagar</option>
+  <option>Kasganj</option>
+  <option>Kaushambi</option>
+  <option>Kushinagar</option>
+  <option>Lakhimpur Kheri</option>
+  <option>Lalitpur</option>
+  <option>Lucknow</option>
+  <option>Maharajganj</option>
+  <option>Mahoba</option>
+  <option>Mainpuri</option>
+  <option>Mathura</option>
+  <option>Mau</option>
+  <option>Meerut</option>
+  <option>Mirzapur</option>
+  <option>Moradabad</option>
+  <option>Muzaffarnagar</option>
+  <option>Pilibhit</option>
+  <option>Pratapgarh</option>
+  <option>Prayagraj</option>
+  <option>Raebareli</option>
+  <option>Rampur</option>
+  <option>Saharanpur</option>
+  <option>Sambhal</option>
+  <option>Sant Kabir Nagar</option>
+  <option>Shahjahanpur</option>
+  <option>Shamli</option>
+  <option>Shravasti</option>
+  <option>Siddharthnagar</option>
+  <option>Sitapur</option>
+  <option>Sonbhadra</option>
+  <option>Sultanpur</option>
+  <option>Unnao</option>
+  <option>Varanasi</option>
+</select>
+
+</div>
+
+
+                            <div class="form-group">
+                                <label for="disease">Choose the Disease:</label>
+                                <select id="disease" required>
+                                    <option value="">--Select Disease--</option>
+                                    <option value="diabetes">Diabetes</option>
+                                    <option value="hypertension">Hypertension</option>
+                                    <option value="asthma">Asthma</option>
+                                    <option value="heart-disease">Heart Disease</option>
+                                    <option value="covid-19">COVID-19</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="report">Upload X-ray or Medical Report:</label>
+                                <input type="file" id="report" accept=".pdf,.jpg,.png">
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="submit-btn">Register</button>
+                                <button type="button" class="cancel-btn" onclick="closePopup()">Cancel</button>
+                            </div>
+                        </form>
+                    `;
+                    break;
+                case 'blog':
+                    content = `
+                        <h2>Blog</h2>
+                        <div class="card">
+                            <h3>Advancements in Eye Care at iCare Hospital</h3>
+                            <p>Our experienced optometrists, like Dr. Subhprabhat with 10 years of experience, provide cutting-edge care for eye-related issues, including cataract surgery and emergency trauma treatment.</p>
+                        </div>
+                        <div class="card">
+                            <h3>Why Choose iCare for Emergency Care?</h3>
+                            <p>Our 24-hour emergency department and trauma care services ensure immediate attention, supported by advanced diagnostic tools like MRI and CT scans for swift, accurate treatment.</p>
+                        </div>
+                    `;
+                    break;
+                     case 'Apointment':
+                    content = `
+                        <h2>👋👍Apointment</h2>
+                        <div class="card">
+                           <ul>    <form id="appointmentForm">
+      <div class="mb-3">
+       <label for="name" class="form-label">Full Name:</label>
+        <input type="text" class="form-control" id="name" required>
+      </div>
+      <div class="mb-3">
+        <label for="email" class="form-label">Email Address:</label>
+        <input type="email" class="form-control" id="email" required>
+      </div>
+      <div class="mb-3">
+        <label for="phone" class="form-label">Phone Number:</label>
+        <input type="tel" class="form-control" id="phone" required>
+      </div>
+      <div class="mb-3">
+        <label for="date" class="form-label">Preferred Date:</label>
+        <input type="date" class="form-control" id="date" required>
+      </div>
+      <div class="mb-3">
+        <label for="department" class="form-label">Department:</label>
+        <select class="form-select" id="department" required>
+          <option value="">Select Department</option>
+          <option>Cardiology</option>
+          <option>Neurology</option>
+          <option>Orthopedics</option>
+          <option>Dermatology</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label for="message" class="form-label">Additional Message: (Optional)</label>
+        <textarea class="form-control" id="message" rows="3"></textarea>
+      </div>
+      <div class="mb-13">
+      <button type="submit" class="btn btn-primary">Book Appointment</button>
+      </div>
+    </form></ul>
+                           
+                        </div>
+                    `;
+                    break;
+                default:
+                    content = '<p>Content not available.</p>';
+            }
+
+            popupContent.innerHTML = content;
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+        
+        // Carousel functionality
+        let currentSlide = 0;
+        const carouselInner = document.getElementById('carousel-inner');
+        const totalSlides = document.querySelectorAll('.carousel-item').length;
+        
+        function updateCarousel() {
+            carouselInner.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateCarousel();
+        }
+        
+        function prevSlide() {
+            currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+            updateCarousel();
+        }
+        
+        // Auto slide change every 5 seconds
+        setInterval(nextSlide, 5000);
+    </script>
+</body>
+</html>
